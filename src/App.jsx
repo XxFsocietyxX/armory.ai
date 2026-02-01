@@ -158,15 +158,15 @@ function Overlay({ currentItem, setIndex, total, inspecting, setInspecting }) {
   const item = items[currentItem];
 
   return (
-    <div className="absolute inset-0 pointer-events-none flex flex-col justify-between p-8 md:p-16 z-10">
+    <div className="absolute inset-0 pointer-events-none flex flex-col justify-between p-6 md:p-16 z-10">
       
       {/* Header */}
       <header className="flex justify-between items-start pointer-events-auto">
         <div onClick={() => setInspecting(false)} className="cursor-pointer">
-          <h1 className="text-2xl font-display font-bold text-white tracking-tighter hover:text-neon-blue transition-colors">
+          <h1 className="text-xl md:text-2xl font-display font-bold text-white tracking-tighter hover:text-neon-blue transition-colors">
             ARMORY<span className="text-neon-blue">.AI</span>
           </h1>
-          <p className="text-xs text-gray-400 mt-1 tracking-widest">DIGITAL ASSET PROTOCOL</p>
+          <p className="text-[10px] md:text-xs text-gray-400 mt-1 tracking-widest">DIGITAL ASSET PROTOCOL</p>
         </div>
         <div className="text-right hidden md:block">
           <p className="text-xs font-mono text-neon-green">SYS.STATUS: ONLINE</p>
@@ -184,26 +184,26 @@ function Overlay({ currentItem, setIndex, total, inspecting, setInspecting }) {
               initial={{ opacity: 0, x: -50 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -50 }}
-              className="w-full md:w-1/3 mb-10 md:mb-0 pointer-events-auto"
+              className="w-full md:w-1/3 mb-6 md:mb-0 pointer-events-auto flex flex-col items-start"
             >
               <div className="flex items-center space-x-4 mb-4">
-                <span className="text-xs font-mono border border-neon-blue text-neon-blue px-2 py-1 rounded">
+                <span className="text-[10px] md:text-xs font-mono border border-neon-blue text-neon-blue px-2 py-1 rounded">
                   TYPE: {item.type.toUpperCase()}
                 </span>
-                <span className="text-xs font-mono text-gray-500">ID: #{String(item.id).padStart(3, '0')}</span>
+                <span className="text-[10px] md:text-xs font-mono text-gray-500">ID: #{String(item.id).padStart(3, '0')}</span>
               </div>
               
-              <h2 className="text-5xl md:text-7xl font-display font-black text-white leading-none mb-6 text-glow">
+              <h2 className="text-4xl md:text-7xl font-display font-black text-white leading-none mb-4 md:mb-6 text-glow">
                 {item.name.toUpperCase()}
               </h2>
               
-              <p className="text-gray-300 font-light leading-relaxed border-l-2 border-neon-purple pl-4 mb-8 max-w-md">
+              <p className="text-sm md:text-base text-gray-300 font-light leading-relaxed border-l-2 border-neon-purple pl-4 mb-6 md:mb-8 max-w-xs md:max-w-md">
                 {item.desc}
               </p>
 
               <button 
                 onClick={() => setInspecting(true)}
-                className="bg-white text-black font-display font-bold py-3 px-8 hover:bg-neon-blue hover:text-black transition-colors duration-300 clip-path-button"
+                className="bg-white text-black font-display font-bold py-2 px-6 md:py-3 md:px-8 text-sm md:text-base hover:bg-neon-blue hover:text-black transition-colors duration-300 clip-path-button"
               >
                 INSPECT ASSET
               </button>
@@ -218,13 +218,13 @@ function Overlay({ currentItem, setIndex, total, inspecting, setInspecting }) {
               initial={{ opacity: 0, x: 50 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: 50 }}
-              className="absolute right-0 top-1/2 -translate-y-1/2 w-80 p-8 glass-panel pointer-events-auto mr-8 md:mr-16 rounded-lg border border-neon-blue/30"
+              className="pointer-events-auto fixed bottom-0 left-0 right-0 w-full p-6 bg-black/90 border-t border-neon-blue/30 rounded-t-2xl md:absolute md:right-0 md:top-1/2 md:bottom-auto md:left-auto md:-translate-y-1/2 md:w-80 md:p-8 md:bg-transparent md:glass-panel md:rounded-lg md:border md:mr-16"
             >
-              <h3 className="text-2xl font-display font-bold mb-6 text-neon-blue">{item.name}</h3>
+              <h3 className="text-xl md:text-2xl font-display font-bold mb-4 md:mb-6 text-neon-blue">{item.name}</h3>
               
-              <div className="space-y-6">
+              <div className="space-y-4 md:space-y-6">
                 <div>
-                  <div className="flex justify-between text-xs font-mono text-gray-400 mb-1">
+                  <div className="flex justify-between text-[10px] md:text-xs font-mono text-gray-400 mb-1">
                     <span>DAMAGE OUTPUT</span>
                     <span>{item.stats?.damage || 50}/100</span>
                   </div>
@@ -239,7 +239,7 @@ function Overlay({ currentItem, setIndex, total, inspecting, setInspecting }) {
                 </div>
 
                 <div>
-                  <div className="flex justify-between text-xs font-mono text-gray-400 mb-1">
+                  <div className="flex justify-between text-[10px] md:text-xs font-mono text-gray-400 mb-1">
                     <span>SPEED / FIRE RATE</span>
                     <span>{item.stats?.speed || 50}/100</span>
                   </div>
@@ -254,7 +254,7 @@ function Overlay({ currentItem, setIndex, total, inspecting, setInspecting }) {
                 </div>
 
                 <div>
-                  <div className="flex justify-between text-xs font-mono text-gray-400 mb-1">
+                  <div className="flex justify-between text-[10px] md:text-xs font-mono text-gray-400 mb-1">
                     <span>{item.stats?.range ? 'EFFECTIVE RANGE' : 'DEFENSE RATING'}</span>
                     <span>{item.stats?.range || item.stats?.defense || 50}/100</span>
                   </div>
@@ -269,7 +269,7 @@ function Overlay({ currentItem, setIndex, total, inspecting, setInspecting }) {
                 </div>
               </div>
 
-              <div className="mt-8 pt-6 border-t border-gray-800">
+              <div className="mt-6 pt-4 md:mt-8 md:pt-6 border-t border-gray-800 hidden md:block">
                 <p className="text-xs text-gray-400 leading-relaxed font-mono">
                   {item.desc}
                 </p>
@@ -309,23 +309,23 @@ function Overlay({ currentItem, setIndex, total, inspecting, setInspecting }) {
               onClick={() => setIndex((currentItem - 1 + total) % total)}
               className="group flex items-center space-x-2 text-gray-400 hover:text-white transition-colors"
             >
-              <span className="text-2xl">←</span>
-              <span className="text-xs font-display tracking-widest group-hover:text-neon-blue">PREV</span>
+              <span className="text-xl md:text-2xl">←</span>
+              <span className="text-[10px] md:text-xs font-display tracking-widest group-hover:text-neon-blue">PREV</span>
             </button>
             
-            <div className="h-px w-12 bg-gray-700"></div>
+            <div className="h-px w-8 md:w-12 bg-gray-700"></div>
             
             <button 
               onClick={() => setIndex((currentItem + 1) % total)}
               className="group flex items-center space-x-2 text-gray-400 hover:text-white transition-colors"
             >
-              <span className="text-xs font-display tracking-widest group-hover:text-neon-blue">NEXT</span>
-              <span className="text-2xl">→</span>
+              <span className="text-[10px] md:text-xs font-display tracking-widest group-hover:text-neon-blue">NEXT</span>
+              <span className="text-xl md:text-2xl">→</span>
             </button>
           </div>
 
           <div className="text-right pointer-events-none">
-            <p className="text-[10rem] font-display font-black text-white opacity-5 absolute bottom-[-3rem] right-[-2rem] select-none">
+            <p className="text-[5rem] md:text-[10rem] font-display font-black text-white opacity-5 absolute bottom-[-1rem] md:bottom-[-3rem] right-[-1rem] md:right-[-2rem] select-none">
               {String(currentItem + 1).padStart(2, '0')}
             </p>
           </div>
