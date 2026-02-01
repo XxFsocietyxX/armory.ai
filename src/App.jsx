@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect, Suspense, useMemo } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import { useGLTF, Environment, ContactShadows, Html, useProgress, Float, Stars, Sparkles, OrbitControls, PerspectiveCamera } from '@react-three/drei';
+import { useGLTF, Environment, ContactShadows, Html, useProgress, Float, Stars, Sparkles, OrbitControls, PerspectiveCamera, useAnimations } from '@react-three/drei';
 import { motion, AnimatePresence } from 'framer-motion';
 import { items } from './data';
 import * as THREE from 'three';
@@ -28,15 +28,29 @@ function Loader() {
 
 // --- Auto-Scaling Model Component ---
 function AutoScaledModel({ file, inspecting }) {
-  const { scene } = useGLTF(`/models/${file}`);
+  const { scene, animations } = useGLTF(`/models/${file}`);
   const groupRef = useRef();
   
-  // Clone the scene to avoid mutating the cached GLTF result (prevents exponential scaling issues)
+  // Animation Support
+  const { actions, names } = useAnimations(animations, groupRef);
+
+  // Play Animation if available
+  useEffect(() => {
+    if (names.length > 0) {
+      // Play the first animation found (usually 'Idle' or 'Mixamo.com')
+      const action = actions[names[0]];
+      action.reset().fadeIn(0.5).play();
+      
+      // Optional: If multiple animations exist, you could pick specific ones here
+      return () => action.fadeOut(0.5);
+    }
+  }, [actions, names]);
+
+  // Clone the scene to avoid mutating the cached GLTF result
   const clone = useMemo(() => SkeletonUtils.clone(scene), [scene]);
 
   // Auto-scale logic: Fit model into a normalized box size
   const { scale, centerOffset } = useMemo(() => {
-    // Reset transforms just in case
     clone.position.set(0, 0, 0);
     clone.rotation.set(0, 0, 0);
     clone.scale.set(1, 1, 1);
@@ -48,25 +62,33 @@ function AutoScaledModel({ file, inspecting }) {
     const center = new THREE.Vector3();
     box.getCenter(center);
     
-    // Determine max dimension to scale down to fit roughly in a 3.5 unit box
     const maxDim = Math.max(size.x, size.y, size.z);
-    // Prevent division by zero
     const scaleFactor = maxDim > 0 ? 3.5 / maxDim : 1;
     
     return {
       scale: scaleFactor,
-      centerOffset: center.multiplyScalar(-scaleFactor) // Inverse center to position at (0,0,0)
+      centerOffset: center.multiplyScalar(-scaleFactor)
     };
   }, [clone]);
 
   useFrame((state) => {
     if (groupRef.current) {
+      // If the model has its own animations, we reduce the procedural movement
+      // to avoid it looking messy. If no animations, we keep the full float effect.
+      const hasAnimations = names.length > 0;
+      
       if (!inspecting) {
-        // Gentle floating rotation in Gallery Mode
-        groupRef.current.rotation.y = THREE.MathUtils.lerp(groupRef.current.rotation.y, Math.sin(state.clock.getElapsedTime() * 0.3) * 0.1 + (state.mouse.x * 0.1), 0.1);
-        groupRef.current.rotation.x = THREE.MathUtils.lerp(groupRef.current.rotation.x, Math.cos(state.clock.getElapsedTime() * 0.2) * 0.05 + (state.mouse.y * 0.1), 0.1);
+        // Gallery Mode
+        if (hasAnimations) {
+          // Subtle rotation only
+          groupRef.current.rotation.y = THREE.MathUtils.lerp(groupRef.current.rotation.y, (state.mouse.x * 0.1), 0.1);
+        } else {
+          // Full Float & Spin
+          groupRef.current.rotation.y = THREE.MathUtils.lerp(groupRef.current.rotation.y, Math.sin(state.clock.getElapsedTime() * 0.3) * 0.1 + (state.mouse.x * 0.1), 0.1);
+          groupRef.current.rotation.x = THREE.MathUtils.lerp(groupRef.current.rotation.x, Math.cos(state.clock.getElapsedTime() * 0.2) * 0.05 + (state.mouse.y * 0.1), 0.1);
+        }
       } else {
-         // Reset rotation when inspecting (let OrbitControls handle it, or smooth return)
+         // Inspection Mode: Stop procedural rotation
          groupRef.current.rotation.y = THREE.MathUtils.lerp(groupRef.current.rotation.y, 0, 0.1);
          groupRef.current.rotation.x = THREE.MathUtils.lerp(groupRef.current.rotation.x, 0, 0.1);
       }
@@ -76,7 +98,7 @@ function AutoScaledModel({ file, inspecting }) {
   return (
     <group ref={groupRef} dispose={null}>
       <group position={[centerOffset.x, centerOffset.y, centerOffset.z]}>
-        <primitive object={clone} scale={scale} />
+        <primitive object={scene} scale={scale} />
       </group>
     </group>
   );
